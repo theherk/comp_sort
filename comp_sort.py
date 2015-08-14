@@ -15,16 +15,27 @@ def dict_sort(item, order=None):
     """
     Function as key to sort data models to order:
     string/int/(other), dict, list
+
+    0 + string # priority strings
+    1 + string # strings
+    2 + string # priority dicts
+    3 + string # dicts
+    4 + string # priority lists
+    5 + string + lists
     """
+    def seq(s, o=None, v=None):
+        return str(s) + str(o) + str(v) if o is not None else str(s)
+
+    order_seq = None
+    if order is not None and item[0] in order:
+        order_seq = [i for i, v in enumerate(order) if v == item[0]][0]
+
     if isinstance(item[1], dict):
-        return str(1)
+        return seq(2, order_seq, item[0]) if order_seq else seq(3)
     elif isinstance(item[1], list):
-        return str(2)
+        return seq(4, order_seq, item[0]) if order_seq else seq(5)
     else:
-        if order is not None and item[0] in order:
-            return str(-1 - [i for i, v in enumerate(order) if v == item[0]][0])
-        else:
-            return str(0) + str(item[1])
+        return seq(0, order_seq, item[0]) if order_seq else seq(1)
 
 
 def comp_sort(data, order=None):
